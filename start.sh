@@ -45,11 +45,11 @@ sudo nft "add rule filter ipfs_limit_out \
 sudo nft "add rule filter ipfs_limit_in \
   ip protocol tcp \
   socket cgroupv2 level $netcgrouplevel \"$netcgroup\" \
-  socket ip saddr != @ipfs_allow_tcp \
+  ip saddr != @ipfs_allow_tcp \
   drop"
 sudo nft "add rule filter ipfs_limit_out \
   ip protocol tcp \
-  cgroupv2 level $netcgrouplevel \"$netcgroup\" \
+  socket cgroupv2 level $netcgrouplevel \"$netcgroup\" \
   ip saddr != @ipfs_allow_tcp \
   reject with icmp type admin-prohibited"
 
