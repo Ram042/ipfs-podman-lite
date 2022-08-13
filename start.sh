@@ -47,12 +47,11 @@ sudo nft "add rule filter ipfs_limit_in \
   cgroupv2 level $netcgrouplevel \"$netcgroup\" \
   ip saddr != @ipfs_allow_tcp \
   drop"
-sudo nft "add rule filter ipfs_limit_in \
+sudo nft "add rule filter ipfs_limit_out \
   ip protocol tcp \
   cgroupv2 level $netcgrouplevel \"$netcgroup\" \
   ip saddr != @ipfs_allow_tcp \
   reject with icmp type admin-prohibited"
-
 
 #UDP
 # Add set of allowed UDP peers
@@ -69,8 +68,14 @@ sudo nft "add rule filter ipfs_limit_out \
  update @ipfs_allow_udp {ip daddr timeout 5m}"
 
 # If packet destination not in whitelist drop
-sudo nft 'add rule filter ipfs_limit_in  ip protocol udp ip saddr != @ipfs_allow_udp drop'
-sudo nft 'add rule filter ipfs_limit_out ip protocol udp ip daddr != @ipfs_allow_udp drop'
+sudo nft "add rule filter ipfs_limit_in \
+  ip protocol udp \
+  socket cgroupv2 level $netcgrouplevel \"$netcgroup\" \
+  ip saddr != @ipfs_allow_udp drop"
+sudo nft "add rule filter ipfs_limit_out \
+ ip protocol udp \
+ socket cgroupv2 level $netcgrouplevel \"$netcgroup\" \
+ ip daddr != @ipfs_allow_udp drop"
 
 
 
