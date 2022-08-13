@@ -2,9 +2,10 @@
 
 # create directory for ipfs if does not exist
 mkdir -p ~/.ipfs
+mkdir -p ~/ipfs-data
 
 # start container and save its id
-container=$(podman run --rm -d --name ipfs -v ~/.ipfs:/data/ipfs -e LIBP2P_TCP_REUSEPORT=false --pull=always docker.io/ipfs/go-ipfs)
+container=$(podman run --rm -d --name ipfs -v ~/.ipfs:/data/ipfs -v ~/ipfs-data:/ipfs-data -e LIBP2P_TCP_REUSEPORT=false --pull=always docker.io/ipfs/go-ipfs)
 
 # get slirp4netns id of containers
 netkey=$(podman inspect $container|jq -r .[0].NetworkSettings.SandboxKey)
