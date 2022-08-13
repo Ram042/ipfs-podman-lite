@@ -32,20 +32,20 @@ sudo nft 'add set filter ipfs_allow_tcp { type ipv4_addr; size 50; timeout 5m;}'
 # Whitelist ip on connection attempt in any direction
 sudo nft "add rule filter ipfs_limit_in \
  ip protocol tcp \
- cgroupv2 level $netcgrouplevel \"$netcgroup\" \
+ socket cgroupv2 level $netcgrouplevel \"$netcgroup\" \
  ct state {new, established} \
  update @ipfs_allow_tcp {ip daddr timeout 5m}"
 sudo nft "add rule filter ipfs_limit_out \
  ip protocol tcp \
- cgroupv2 level $netcgrouplevel \"$netcgroup\" \
+ socket cgroupv2 level $netcgrouplevel \"$netcgroup\" \
  ct state {new, established} \
  update @ipfs_allow_tcp {ip daddr timeout 5m}"
 
 # Drop connections if not in whitelist
 sudo nft "add rule filter ipfs_limit_in \
   ip protocol tcp \
-  cgroupv2 level $netcgrouplevel \"$netcgroup\" \
-  ip saddr != @ipfs_allow_tcp \
+  socket cgroupv2 level $netcgrouplevel \"$netcgroup\" \
+  socket ip saddr != @ipfs_allow_tcp \
   drop"
 sudo nft "add rule filter ipfs_limit_out \
   ip protocol tcp \
