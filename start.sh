@@ -34,7 +34,7 @@ sudo nft "add rule filter ipfs_limit_in \
  ip protocol tcp \
  socket cgroupv2 level $netcgrouplevel \"$netcgroup\" \
  ct state {new, established} \
- update @ipfs_allow_tcp {ip daddr timeout 5m}"
+ update @ipfs_allow_tcp {ip saddr timeout 5m}"
 sudo nft "add rule filter ipfs_limit_out \
  ip protocol tcp \
  socket cgroupv2 level $netcgrouplevel \"$netcgroup\" \
@@ -50,7 +50,7 @@ sudo nft "add rule filter ipfs_limit_in \
 sudo nft "add rule filter ipfs_limit_out \
   ip protocol tcp \
   socket cgroupv2 level $netcgrouplevel \"$netcgroup\" \
-  ip saddr != @ipfs_allow_tcp \
+  ip daddr != @ipfs_allow_tcp \
   reject with icmp type admin-prohibited"
 
 #UDP
@@ -61,7 +61,7 @@ sudo nft 'add set filter ipfs_allow_udp { type ipv4_addr; size 50; timeout 5m;}'
 sudo nft "add rule filter ipfs_limit_in \
  ip protocol udp \
  socket cgroupv2 level $netcgrouplevel \"$netcgroup\" \
- update @ipfs_allow_udp {ip daddr timeout 5m}"
+ update @ipfs_allow_udp {ip saddr timeout 5m}"
 sudo nft "add rule filter ipfs_limit_out \
  ip protocol udp \
  socket cgroupv2 level $netcgrouplevel \"$netcgroup\" \
